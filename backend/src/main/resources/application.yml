@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: tripwave-api
+  servlet:
+    multipart:
+      max-file-size: 80MB
+      max-request-size: 85MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/travel_agency
+    username: travel
+    password: travel_secret
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: 8080
+  servlet:
+    session:
+      cookie:
+        same-site: lax
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-this-to-a-long-random-secret-at-least-256-bits-for-production-use-openssl}
+    access-token-minutes: 60
+    refresh-token-days: 14
+  cors:
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173
+  minio:
+    endpoint: http://127.0.0.1:9000
+    public-endpoint: http://127.0.0.1:9000
+    access-key: minioadmin
+    secret-key: minioadmin_secret
+    bucket: travel-media
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.hibernate.SQL: warn
