@@ -31,15 +31,7 @@ const initials = computed(() => {
         title="TripWave"
         aria-label="TripWave — главная"
       >
-        <svg class="bento-rail-logo" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-          <path
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            d="M3 14c2.8-3.5 6.2-3.5 9 0s6.2 3.5 9 0M3 10c2.8-3.2 6.2-3.2 9 0s6.2 3.2 9 0"
-          />
-        </svg>
+        <img class="bento-rail-logo" src="/logo/logo_tripWave.png" alt="TripWave logo" />
       </RouterLink>
 
       <nav class="bento-rail-nav">
@@ -122,7 +114,10 @@ const initials = computed(() => {
       <Teleport to="body">
         <div class="bento-mobile-sticky">
           <header class="bento-top-mobile">
-            <RouterLink to="/" class="bento-top-mobile-brand">TripWave</RouterLink>
+            <RouterLink to="/" class="bento-top-mobile-brand" aria-label="TripWave — главная">
+              <img class="bento-top-mobile-logo" src="/logo/logo_tripWave.png" alt="TripWave logo" />
+              <span>TripWave</span>
+            </RouterLink>
             <button type="button" class="bento-mobile-toggle" aria-label="Меню" @click="menuOpen = !menuOpen">
               <svg v-if="!menuOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 6h16M4 12h16M4 18h16" />
