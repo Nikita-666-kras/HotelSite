@@ -7,6 +7,8 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -34,6 +36,25 @@ public class StorageService {
         } else {
             this.minioPublicClient = minioClient;
         }
+    }
+
+    /**
+     * Для API: ключ объекта в MinIO или устаревший полный URL вида
+     * http://localhost:19000/travel-media/... — пересобирается в актуальный публичный URL.
+     */
+    public String resolveDisplayUrl(String stored) {
+        if (stored == null || stored.isBlank()) {
+            return null;
+        }
+        String s = stored.trim();
+        if (!s.startsWith("http://") && !s.startsWith("https://")) {
+            return presignedGetUrl(s);
+        }
+        String objectKey = tryExtractBucketObjectKey(s);
+        if (objectKey != null && !objectKey.isBlank()) {
+            return presignedGetUrl(objectKey);
+        }
+        return s;
     }
 
     public String presignedGetUrl(String objectKey) {
@@ -65,6 +86,41 @@ public class StorageService {
         String normalized = publicEndpoint.endsWith("/") ? publicEndpoint.substring(0, publicEndpoint.length() - 1) : publicEndpoint;
         String encodedKey = encodePath(objectKey);
         return normalized + "/" + appProperties.getMinio().getBucket() + "/" + encodedKey;
+    }
+
+    /** Извлекает object key из path-style URL .../bucketName/key. */
+    private String tryExtractBucketObjectKey(String url) {
+        try {
+            URI uri = URI.create(url.trim());
+            String path = uri.getPath();
+            if (path == null || path.isEmpty()) {
+                return null;
+            }
+            String bucket = appProperties.getMinio().getBucket();
+            String prefix = "/" + bucket + "/";
+            if (!path.startsWith(prefix)) {
+                return null;
+            }
+            String encodedTail = path.substring(prefix.length());
+            return decodeObjectKeyPath(encodedTail);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private static String decodeObjectKeyPath(String pathEncoded) {
+        if (pathEncoded == null || pathEncoded.isEmpty()) {
+            return "";
+        }
+        String[] seg = pathEncoded.split("/");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < seg.length; i++) {
+            if (i > 0) {
+                sb.append('/');
+            }
+            sb.append(URLDecoder.decode(seg[i], StandardCharsets.UTF_8).replace('+', ' '));
+        }
+        return sb.toString();
     }
 
     private static String encodePath(String objectKey) {

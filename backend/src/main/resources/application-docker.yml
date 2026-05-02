@@ -11,7 +11,9 @@ app:
     from: ${MAIL_FROM:}
   minio:
     endpoint: http://minio:9000
-    public-endpoint: http://localhost:19000
+    # Публичный базовый URL без /travel-media — бэкенд сам добавляет bucket.
+    # Переопределяется через APP_MINIO_PUBLIC_ENDPOINT в docker-compose (например https://tripwawe.ru).
+    public-endpoint: ${APP_MINIO_PUBLIC_ENDPOINT:http://127.0.0.1:8888}
     access-key: minioadmin
     secret-key: minioadmin_secret
   cors:

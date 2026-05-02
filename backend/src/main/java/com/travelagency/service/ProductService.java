@@ -128,10 +128,7 @@ public class ProductService {
         if (s == null || s.isBlank()) {
             return null;
         }
-        if (s.startsWith("http://") || s.startsWith("https://")) {
-            return s;
-        }
-        return storageService.presignedGetUrl(s);
+        return storageService.resolveDisplayUrl(s);
     }
 
     private static String blankToNull(String s) {
