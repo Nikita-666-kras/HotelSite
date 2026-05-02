@@ -5,8 +5,8 @@ services:
       POSTGRES_USER: travel
       POSTGRES_PASSWORD: travel_secret
       POSTGRES_DB: travel_agency
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -21,10 +21,9 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin_secret
-    # Host ports differ from defaults when 9000/9001 or 8080 are already in use (e.g. other stacks).
-    ports:
-      - "19000:9000"
-      - "19001:9001"
+    expose:
+      - "9000"
+      - "9001"
     volumes:
       - miniodata:/data
 
@@ -32,8 +31,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "18080:8080"
+    expose:
+      - "8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       JWT_SECRET: docker-compose-dev-only-change-for-production-minimum-thirty-two-chars-ok
@@ -55,12 +54,28 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "8888:80"
     depends_on:
       backend:
         condition: service_healthy
+    networks:
+      - default
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tripwawe-http.rule=Host(`tripwawe.ru`) || Host(`www.tripwawe.ru`)
+      - traefik.http.routers.tripwawe-http.entrypoints=web
+      - traefik.http.routers.tripwawe-http.middlewares=tripwawe-redirect-https
+      - traefik.http.routers.tripwawe.rule=Host(`tripwawe.ru`) || Host(`www.tripwawe.ru`)
+      - traefik.http.routers.tripwawe.entrypoints=websecure
+      - traefik.http.routers.tripwawe.tls=true
+      - traefik.http.routers.tripwawe.tls.certresolver=le
+      - traefik.http.services.tripwawe.loadbalancer.server.port=80
+      - traefik.http.middlewares.tripwawe-redirect-https.redirectscheme.scheme=https
 
 volumes:
   pgdata:
   miniodata:
+
+networks:
+  web:
+    external: true
