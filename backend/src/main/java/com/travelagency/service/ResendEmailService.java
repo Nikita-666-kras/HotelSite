@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
+import java.time.Duration;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,8 @@ public class ResendEmailService {
 
     private static final String RESEND_URL = "https://api.resend.com/emails";
 
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final HttpClient httpClient =
+            HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     private final ObjectMapper objectMapper;
     private final String apiKey;
     private final String fromAddress;
@@ -44,6 +47,7 @@ public class ResendEmailService {
                     "text", body));
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(RESEND_URL))
+                    .timeout(Duration.ofSeconds(20))
                     .header("Authorization", "Bearer " + apiKey)
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(payload))
@@ -55,6 +59,8 @@ public class ResendEmailService {
             }
         } catch (BadRequestException e) {
             throw e;
+        } catch (HttpTimeoutException e) {
+            throw new BadRequestException("Resend request timed out");
         } catch (Exception e) {
             throw new BadRequestException("Failed to send email via Resend");
         }
