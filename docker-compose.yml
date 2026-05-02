@@ -54,28 +54,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8888:80"
     depends_on:
       backend:
         condition: service_healthy
-    networks:
-      - default
-      - web
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.tripwawe-http.rule=Host(`tripwawe.ru`) || Host(`www.tripwawe.ru`)
-      - traefik.http.routers.tripwawe-http.entrypoints=web
-      - traefik.http.routers.tripwawe-http.middlewares=tripwawe-redirect-https
-      - traefik.http.routers.tripwawe.rule=Host(`tripwawe.ru`) || Host(`www.tripwawe.ru`)
-      - traefik.http.routers.tripwawe.entrypoints=websecure
-      - traefik.http.routers.tripwawe.tls=true
-      - traefik.http.routers.tripwawe.tls.certresolver=le
-      - traefik.http.services.tripwawe.loadbalancer.server.port=80
-      - traefik.http.middlewares.tripwawe-redirect-https.redirectscheme.scheme=https
 
 volumes:
   pgdata:
   miniodata:
-
-networks:
-  web:
-    external: true
