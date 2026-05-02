@@ -56,7 +56,14 @@ public class SecurityConfig {
                                         .permitAll()
                                         .requestMatchers(HttpMethod.GET, "/api/media/**")
                                         .permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login")
+                                        .requestMatchers(
+                                                HttpMethod.POST,
+                                                "/api/auth/register",
+                                                "/api/auth/register/request",
+                                                "/api/auth/register/verify",
+                                                "/api/auth/login",
+                                                "/api/auth/login/request",
+                                                "/api/auth/login/verify")
                                         .permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh")
                                         .permitAll()
