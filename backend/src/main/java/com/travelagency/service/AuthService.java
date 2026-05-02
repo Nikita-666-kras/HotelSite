@@ -22,6 +22,7 @@ import io.jsonwebtoken.Claims;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.UUID;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -114,9 +115,13 @@ public class AuthService {
     @Transactional
     public AuthOtpChallengeResponse requestLoginOtp(RequestLoginOtpRequest req) {
         ensureResendConfigured();
-        Authentication auth =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(req.email().trim().toLowerCase(), req.password()));
+        Authentication auth;
+        try {
+            auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(req.email().trim().toLowerCase(), req.password()));
+        } catch (AuthenticationException e) {
+            throw new BadRequestException("Invalid credentials");
+        }
         UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
         User u =
                 userRepository
