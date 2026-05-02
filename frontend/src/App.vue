@@ -20,6 +20,8 @@ const initials = computed(() => {
   if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase()
   return n.slice(0, 2).toUpperCase()
 })
+
+const supportRoute = computed(() => (auth.isManager ? '/manager/support' : '/support'))
 </script>
 
 <template>
@@ -65,9 +67,33 @@ const initials = computed(() => {
           <RouterLink to="/bookings" class="bento-rail-link" title="Заявки">
             <svg viewBox="0 0 24 24"><path d="M6 4h12v16H6zM9 8h6M9 12h6" /></svg>
           </RouterLink>
-          <RouterLink to="/support" class="bento-rail-link" title="Поддержка">
-            <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H6l-3 3v-5a8 8 0 018-8h10z" /></svg>
+          <RouterLink :to="supportRoute" class="bento-rail-link" title="Поддержка">
+            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <path d="M16 36a16 16 0 1 1 32 0" stroke="currentColor" stroke-width="3" fill="none" />
+              <rect x="13" y="36" width="9" height="14" rx="4.5" stroke="currentColor" stroke-width="3" />
+              <rect x="42" y="36" width="9" height="14" rx="4.5" stroke="currentColor" stroke-width="3" />
+              <path d="M50 44c5 0 8 3 8 6" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" />
+              <circle cx="58" cy="50" r="2.5" fill="currentColor" />
+            </svg>
           </RouterLink>
+          <template v-if="auth.isAdmin">
+            <RouterLink to="/admin" class="bento-rail-link" title="Админка">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  d="M12 15a3 3 0 100-6 3 3 0 000 6z"
+                />
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c0 .69.41 1.3 1 1.51h.09a2 2 0 010 4h-.09a1.65 1.65 0 00-1 1.51z"
+                />
+              </svg>
+            </RouterLink>
+          </template>
           <template v-if="auth.isManager">
             <RouterLink to="/manager/catalog" class="bento-rail-link" title="Каталог">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -81,9 +107,6 @@ const initials = computed(() => {
             </RouterLink>
             <RouterLink to="/manager/crm" class="bento-rail-link" title="CRM">
               <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16" /></svg>
-            </RouterLink>
-            <RouterLink to="/manager/support" class="bento-rail-link" title="Чаты">
-              <svg viewBox="0 0 24 24"><path d="M8 10h8M8 14h5M4 18l2-3H5a3 3 0 01-3-3V7a3 3 0 013-3h14a3 3 0 013 3v5a3 3 0 01-3 3h-1l2 3" /></svg>
             </RouterLink>
           </template>
         </template>
@@ -103,7 +126,12 @@ const initials = computed(() => {
             <svg viewBox="0 0 24 24"><path d="M15 3h4v18h-4M10 17l5-5-5-5M15 12H3" /></svg>
           </RouterLink>
           <RouterLink to="/register" class="bento-rail-link" title="Регистрация">
-            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M12 7a4 4 0 100 8 4 4 0 000-8zM20 8v6M23 11h-6" /></svg>
+            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <circle cx="30" cy="24" r="10" stroke="currentColor" stroke-width="3" />
+              <path d="M14 49c0-9 32-9 32 0" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+              <line x1="50" y1="12" x2="50" y2="24" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+              <line x1="44" y1="18" x2="56" y2="18" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+            </svg>
           </RouterLink>
         </template>
       </div>
@@ -139,11 +167,11 @@ const initials = computed(() => {
             <template v-if="auth.isAuthenticated">
               <RouterLink to="/profile">Профиль</RouterLink>
               <RouterLink to="/bookings">Мои заявки</RouterLink>
-              <RouterLink to="/support">Поддержка</RouterLink>
+              <RouterLink :to="supportRoute">Поддержка</RouterLink>
+              <RouterLink v-if="auth.isAdmin" to="/admin">Админка</RouterLink>
               <template v-if="auth.isManager">
                 <RouterLink to="/manager/catalog">Каталог</RouterLink>
                 <RouterLink to="/manager/crm">CRM</RouterLink>
-                <RouterLink to="/manager/support">Чаты</RouterLink>
               </template>
               <a href="#" @click.prevent="auth.logout">Выйти</a>
             </template>

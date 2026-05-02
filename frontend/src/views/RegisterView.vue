@@ -11,12 +11,22 @@ const form = ref({
   fullName: '',
   phone: '',
 })
+const code = ref('')
+const otpRequested = ref(false)
 const error = ref('')
+const info = ref('')
 
 async function onSubmit() {
   error.value = ''
+  info.value = ''
   try {
-    await auth.register(form.value)
+    if (!otpRequested.value) {
+      await auth.requestRegisterOtp(form.value)
+      otpRequested.value = true
+      info.value = 'Код подтверждения отправлен на почту.'
+      return
+    }
+    await auth.registerWithOtp(form.value.email, code.value)
     router.push('/')
   } catch (e) {
     error.value = e.response?.data?.error || 'Не удалось зарегистрироваться'
@@ -34,21 +44,39 @@ async function onSubmit() {
       <form class="card stack" @submit.prevent="onSubmit">
         <div class="field">
           <label class="label">ФИО</label>
-          <input v-model="form.fullName" class="input" required />
+          <input v-model="form.fullName" class="input" :disabled="otpRequested" required />
         </div>
         <div class="field">
           <label class="label">Email</label>
-          <input v-model="form.email" class="input" type="email" autocomplete="username" required />
+          <input v-model="form.email" class="input" type="email" autocomplete="username" :disabled="otpRequested" required />
         </div>
         <div class="field">
           <label class="label">Телефон</label>
-          <input v-model="form.phone" class="input" type="tel" />
+          <input v-model="form.phone" class="input" type="tel" :disabled="otpRequested" />
         </div>
         <div class="field">
           <label class="label">Пароль (не менее 8 символов)</label>
-          <input v-model="form.password" class="input" type="password" autocomplete="new-password" minlength="8" required />
+          <input
+            v-model="form.password"
+            class="input"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            :disabled="otpRequested"
+            required
+          />
         </div>
-        <button class="btn btn-gradient" type="submit" style="width: 100%">Создать аккаунт</button>
+        <div v-if="otpRequested" class="field">
+          <label class="label">Код подтверждения</label>
+          <input v-model="code" class="input" inputmode="numeric" maxlength="6" placeholder="6 цифр" required />
+        </div>
+        <button class="btn btn-gradient" type="submit" style="width: 100%">
+          {{ otpRequested ? 'Подтвердить регистрацию' : 'Получить код' }}
+        </button>
+        <button v-if="otpRequested" class="btn btn-ghost" type="button" style="width: 100%" @click="otpRequested = false; code = ''; info = ''">
+          Изменить данные
+        </button>
+        <p v-if="info" class="muted">{{ info }}</p>
         <p v-if="error" class="error">{{ error }}</p>
       </form>
     </div>

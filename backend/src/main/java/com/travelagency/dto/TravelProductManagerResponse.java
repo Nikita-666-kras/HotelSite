@@ -5,9 +5,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public record TravelProductManagerResponse(
-        Long id,
+        UUID id,
         ProductType type,
         String name,
         String description,

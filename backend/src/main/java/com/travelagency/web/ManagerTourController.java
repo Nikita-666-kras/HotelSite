@@ -5,6 +5,7 @@ import com.travelagency.dto.TourWriteRequest;
 import com.travelagency.service.ManagerTourService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,22 +40,22 @@ public class ManagerTourController {
     }
 
     @PutMapping("/{id}")
-    public TourManagerResponse update(@PathVariable Long id, @Valid @RequestBody TourWriteRequest req) {
+    public TourManagerResponse update(@PathVariable UUID id, @Valid @RequestBody TourWriteRequest req) {
         return managerTourService.update(id, req);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         managerTourService.delete(id);
     }
 
     @PostMapping(value = "/{id}/media", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public TourManagerResponse uploadMedia(@PathVariable Long id, @RequestPart("file") MultipartFile file) {
+    public TourManagerResponse uploadMedia(@PathVariable UUID id, @RequestPart("file") MultipartFile file) {
         return managerTourService.addMedia(id, file);
     }
 
     @DeleteMapping("/{id}/media")
-    public TourManagerResponse removeMedia(@PathVariable Long id, @RequestParam("objectKey") String objectKey) {
+    public TourManagerResponse removeMedia(@PathVariable UUID id, @RequestParam("objectKey") String objectKey) {
         return managerTourService.removeMedia(id, objectKey);
     }
 }

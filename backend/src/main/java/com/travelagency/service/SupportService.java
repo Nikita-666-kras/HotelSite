@@ -13,6 +13,7 @@ import com.travelagency.repository.SupportMessageRepository;
 import com.travelagency.repository.UserRepository;
 import com.travelagency.security.UserPrincipal;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +58,7 @@ public class SupportService {
     }
 
     @Transactional(readOnly = true)
-    public SupportConversationResponse getConversation(Long id, UserPrincipal principal) {
+    public SupportConversationResponse getConversation(UUID id, UserPrincipal principal) {
         SupportConversation c =
                 conversationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
         if (principal.getRole() == Role.USER && !c.getUser().getId().equals(principal.getId())) {
@@ -67,7 +68,7 @@ public class SupportService {
     }
 
     @Transactional
-    public SupportMessageResponse postUserMessage(Long conversationId, UserPrincipal principal, SupportMessageRequest req) {
+    public SupportMessageResponse postUserMessage(UUID conversationId, UserPrincipal principal, SupportMessageRequest req) {
         SupportConversation c =
                 conversationRepository
                         .findById(conversationId)
@@ -88,7 +89,7 @@ public class SupportService {
     }
 
     @Transactional
-    public SupportMessageResponse postStaffMessage(Long conversationId, UserPrincipal principal, SupportMessageRequest req) {
+    public SupportMessageResponse postStaffMessage(UUID conversationId, UserPrincipal principal, SupportMessageRequest req) {
         SupportConversation c =
                 conversationRepository
                         .findById(conversationId)
@@ -102,7 +103,7 @@ public class SupportService {
     }
 
     @Transactional(readOnly = true)
-    public SupportConversationResponse getConversationForStaff(Long id) {
+    public SupportConversationResponse getConversationForStaff(UUID id) {
         return loadConversation(id);
     }
 
@@ -118,7 +119,7 @@ public class SupportService {
                 m.getId(), m.getBody(), m.isStaffReply(), author.getEmail(), m.getCreatedAt());
     }
 
-    private SupportConversationResponse loadConversation(Long id) {
+    private SupportConversationResponse loadConversation(UUID id) {
         SupportConversation c =
                 conversationRepository
                         .findDetailedById(id)

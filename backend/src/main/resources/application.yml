@@ -28,6 +28,11 @@ server:
         same-site: lax
 
 app:
+  mail:
+    # Resend sender, for example: no-reply@your-domain.com
+    from: ""
+  resend:
+    api-key: ${RESEND_API_KEY:}
   jwt:
     secret: ${JWT_SECRET:change-this-to-a-long-random-secret-at-least-256-bits-for-production-use-openssl}
     access-token-minutes: 60

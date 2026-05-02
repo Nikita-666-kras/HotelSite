@@ -4,13 +4,14 @@ import com.travelagency.domain.Role;
 import com.travelagency.domain.User;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserPrincipal implements UserDetails {
 
-    private final Long id;
+    private final UUID id;
     private final String email;
     private final String passwordHash;
     private final Role role;
@@ -24,7 +25,7 @@ public class UserPrincipal implements UserDetails {
         this.enabled = user.isEnabled();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

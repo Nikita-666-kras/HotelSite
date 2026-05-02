@@ -8,6 +8,7 @@ import com.travelagency.security.UserPrincipal;
 import com.travelagency.service.SupportService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,14 +33,14 @@ public class ManagerSupportController {
     }
 
     @GetMapping("/conversations/{id}")
-    public SupportConversationResponse one(@PathVariable Long id) {
+    public SupportConversationResponse one(@PathVariable UUID id) {
         return supportService.getConversationForStaff(id);
     }
 
     @PostMapping("/conversations/{id}/messages")
     public SupportMessageResponse reply(
             @AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody SupportMessageRequest req) {
         return supportService.postStaffMessage(id, principal, req);
     }

@@ -4,9 +4,10 @@ import com.travelagency.domain.TourCategory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public record TourResponse(
-        Long id,
+        UUID id,
         String title,
         String slug,
         String description,

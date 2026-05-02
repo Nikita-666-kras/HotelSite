@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(
@@ -19,8 +20,8 @@ import java.time.Instant;
 public class FavoriteTour {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -33,7 +34,7 @@ public class FavoriteTour {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

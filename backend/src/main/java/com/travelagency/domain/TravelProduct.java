@@ -15,14 +15,15 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "travel_products")
 public class TravelProduct {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
@@ -73,7 +74,7 @@ public class TravelProduct {
     @Column(name = "video_urls", columnDefinition = "jsonb")
     private List<String> videoUrls = new ArrayList<>();
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

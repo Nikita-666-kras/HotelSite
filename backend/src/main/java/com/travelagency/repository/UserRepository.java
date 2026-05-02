@@ -4,9 +4,11 @@ import com.travelagency.domain.Role;
 import com.travelagency.domain.User;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 
     Optional<User> findByEmailIgnoreCase(String email);
 

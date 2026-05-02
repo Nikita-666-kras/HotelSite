@@ -6,6 +6,7 @@ import com.travelagency.security.UserPrincipal;
 import com.travelagency.service.BookingService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,7 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    public BookingResponse one(@AuthenticationPrincipal UserPrincipal principal, @PathVariable Long id) {
+    public BookingResponse one(@AuthenticationPrincipal UserPrincipal principal, @PathVariable UUID id) {
         return bookingService.getByIdForUser(id, principal);
     }
 }

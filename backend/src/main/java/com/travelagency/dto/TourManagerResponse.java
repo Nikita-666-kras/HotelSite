@@ -4,10 +4,11 @@ import com.travelagency.domain.TourCategory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /** Tour + raw MinIO keys for editing media in manager UI. */
 public record TourManagerResponse(
-        Long id,
+        UUID id,
         String title,
         String slug,
         String description,

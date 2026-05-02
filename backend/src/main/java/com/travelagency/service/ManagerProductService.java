@@ -7,6 +7,7 @@ import com.travelagency.dto.TravelProductWriteRequest;
 import com.travelagency.repository.TravelProductRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +40,7 @@ public class ManagerProductService {
     }
 
     @Transactional
-    public TravelProductManagerResponse update(Long id, TravelProductWriteRequest req) {
+    public TravelProductManagerResponse update(UUID id, TravelProductWriteRequest req) {
         TravelProduct p = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         apply(p, req);
         productRepository.save(p);
@@ -52,7 +53,7 @@ public class ManagerProductService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         TravelProduct p = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         for (String key : new ArrayList<>(p.getImageUrls())) {
             if (!isExternalUrl(key)) {
@@ -68,7 +69,7 @@ public class ManagerProductService {
     }
 
     @Transactional
-    public TravelProductManagerResponse addImage(Long productId, MultipartFile file) {
+    public TravelProductManagerResponse addImage(UUID productId, MultipartFile file) {
         validateImage(file);
         TravelProduct p = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Product not found"));
         String key = storageService.upload("products/" + productId + "/img", file);
@@ -78,7 +79,7 @@ public class ManagerProductService {
     }
 
     @Transactional
-    public TravelProductManagerResponse addVideo(Long productId, MultipartFile file) {
+    public TravelProductManagerResponse addVideo(UUID productId, MultipartFile file) {
         validateVideo(file);
         TravelProduct p = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Product not found"));
         String key = storageService.upload("products/" + productId + "/vid", file);
@@ -88,16 +89,16 @@ public class ManagerProductService {
     }
 
     @Transactional
-    public TravelProductManagerResponse removeImage(Long productId, String objectKey) {
+    public TravelProductManagerResponse removeImage(UUID productId, String objectKey) {
         return removeMedia(productId, objectKey, true);
     }
 
     @Transactional
-    public TravelProductManagerResponse removeVideo(Long productId, String objectKey) {
+    public TravelProductManagerResponse removeVideo(UUID productId, String objectKey) {
         return removeMedia(productId, objectKey, false);
     }
 
-    private TravelProductManagerResponse removeMedia(Long productId, String objectKey, boolean image) {
+    private TravelProductManagerResponse removeMedia(UUID productId, String objectKey, boolean image) {
         if (objectKey == null || objectKey.isBlank()) {
             throw new BadRequestException("objectKey required");
         }

@@ -13,6 +13,9 @@ import com.travelagency.repository.UserRepository;
 import com.travelagency.security.UserPrincipal;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,39 +43,43 @@ public class ProductService {
         String o = blankToNull(req.origin());
         String d = blankToNull(req.destination());
         String originPattern = o == null ? null : "%" + o.toLowerCase() + "%";
-        String destPattern = d == null ? null : "%" + d.toLowerCase() + "%";
-        if (req.type() == null
-                && originPattern == null
-                && destPattern == null
-                && req.maxPrice() == null
-                && req.departAfter() == null
-                && req.checkInFrom() == null) {
-            return travelProductRepository.findAllByOrderByPriceAsc().stream()
-                    .map(this::toResponse)
-                    .toList();
+        String destinationPattern = d == null ? null : "%" + d.toLowerCase() + "%";
+        Specification<TravelProduct> spec = (root, query, cb) -> cb.conjunction();
+        if (req.type() != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("type"), req.type()));
         }
-        return travelProductRepository
-                .search(
-                        req.type(),
-                        originPattern,
-                        destPattern,
-                        req.maxPrice(),
-                        req.departAfter(),
-                        req.checkInFrom())
-                .stream()
+        if (originPattern != null) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("origin")), originPattern));
+        }
+        if (destinationPattern != null) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("destination")), destinationPattern));
+        }
+        if (req.maxPrice() != null) {
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), req.maxPrice()));
+        }
+        if (req.departAfter() != null) {
+            spec = spec.and((root, query, cb) -> cb.or(
+                    cb.isNull(root.get("departAt")), cb.greaterThanOrEqualTo(root.get("departAt"), req.departAfter())));
+        }
+        if (req.checkInFrom() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.or(cb.isNull(root.get("checkIn")), cb.greaterThanOrEqualTo(root.get("checkIn"), req.checkInFrom())));
+        }
+
+        return travelProductRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "price")).stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public TravelProductResponse get(Long id) {
+    public TravelProductResponse get(UUID id) {
         TravelProduct p =
                 travelProductRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         return toResponse(p);
     }
 
     @Transactional
-    public Long book(UserPrincipal principal, ProductBookingRequest req) {
+    public UUID book(UserPrincipal principal, ProductBookingRequest req) {
         TravelProduct p =
                 travelProductRepository
                         .findById(req.productId())

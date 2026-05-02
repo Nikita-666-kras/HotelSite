@@ -5,6 +5,10 @@ spring:
     password: travel_secret
 
 app:
+  resend:
+    api-key: ${RESEND_API_KEY:}
+  mail:
+    from: ${MAIL_FROM:}
   minio:
     endpoint: http://minio:9000
     public-endpoint: http://localhost:19000

@@ -37,6 +37,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       JWT_SECRET: docker-compose-dev-only-change-for-production-minimum-thirty-two-chars-ok
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      MAIL_FROM: ${MAIL_FROM:-}
     depends_on:
       postgres:
         condition: service_healthy

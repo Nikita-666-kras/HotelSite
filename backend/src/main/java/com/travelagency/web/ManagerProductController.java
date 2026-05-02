@@ -5,6 +5,7 @@ import com.travelagency.dto.TravelProductWriteRequest;
 import com.travelagency.service.ManagerProductService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,32 +40,32 @@ public class ManagerProductController {
     }
 
     @PutMapping("/{id}")
-    public TravelProductManagerResponse update(@PathVariable Long id, @Valid @RequestBody TravelProductWriteRequest req) {
+    public TravelProductManagerResponse update(@PathVariable UUID id, @Valid @RequestBody TravelProductWriteRequest req) {
         return managerProductService.update(id, req);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         managerProductService.delete(id);
     }
 
     @PostMapping(value = "/{id}/media/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public TravelProductManagerResponse uploadImage(@PathVariable Long id, @RequestPart("file") MultipartFile file) {
+    public TravelProductManagerResponse uploadImage(@PathVariable UUID id, @RequestPart("file") MultipartFile file) {
         return managerProductService.addImage(id, file);
     }
 
     @PostMapping(value = "/{id}/media/video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public TravelProductManagerResponse uploadVideo(@PathVariable Long id, @RequestPart("file") MultipartFile file) {
+    public TravelProductManagerResponse uploadVideo(@PathVariable UUID id, @RequestPart("file") MultipartFile file) {
         return managerProductService.addVideo(id, file);
     }
 
     @DeleteMapping("/{id}/media/image")
-    public TravelProductManagerResponse removeImage(@PathVariable Long id, @RequestParam("objectKey") String objectKey) {
+    public TravelProductManagerResponse removeImage(@PathVariable UUID id, @RequestParam("objectKey") String objectKey) {
         return managerProductService.removeImage(id, objectKey);
     }
 
     @DeleteMapping("/{id}/media/video")
-    public TravelProductManagerResponse removeVideo(@PathVariable Long id, @RequestParam("objectKey") String objectKey) {
+    public TravelProductManagerResponse removeVideo(@PathVariable UUID id, @RequestParam("objectKey") String objectKey) {
         return managerProductService.removeVideo(id, objectKey);
     }
 }

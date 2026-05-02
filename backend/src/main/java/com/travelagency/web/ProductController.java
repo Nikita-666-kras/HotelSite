@@ -8,6 +8,7 @@ import com.travelagency.service.ProductService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,12 +34,12 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public TravelProductResponse one(@PathVariable Long id) {
+    public TravelProductResponse one(@PathVariable UUID id) {
         return productService.get(id);
     }
 
     @PostMapping("/bookings")
-    public Map<String, Long> book(
+    public Map<String, UUID> book(
             @AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody ProductBookingRequest req) {
         return Map.of("id", productService.book(principal, req));
     }

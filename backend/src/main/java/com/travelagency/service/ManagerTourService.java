@@ -7,6 +7,7 @@ import com.travelagency.repository.TourRepository;
 import com.travelagency.util.SlugUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +40,7 @@ public class ManagerTourService {
     }
 
     @Transactional
-    public TourManagerResponse update(Long id, TourWriteRequest req) {
+    public TourManagerResponse update(UUID id, TourWriteRequest req) {
         Tour t = tourRepository.findById(id).orElseThrow(() -> new NotFoundException("Tour not found"));
         String slug = buildSlug(req, id);
         apply(t, req, slug);
@@ -52,7 +53,7 @@ public class ManagerTourService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Tour t = tourRepository.findById(id).orElseThrow(() -> new NotFoundException("Tour not found"));
         for (String key : new ArrayList<>(t.getMediaObjectKeys())) {
             storageService.deleteObject(key);
@@ -61,7 +62,7 @@ public class ManagerTourService {
     }
 
     @Transactional
-    public TourManagerResponse addMedia(Long tourId, MultipartFile file) {
+    public TourManagerResponse addMedia(UUID tourId, MultipartFile file) {
         validateMedia(file);
         Tour t = tourRepository.findById(tourId).orElseThrow(() -> new NotFoundException("Tour not found"));
         String key = storageService.upload("tours/" + tourId, file);
@@ -71,7 +72,7 @@ public class ManagerTourService {
     }
 
     @Transactional
-    public TourManagerResponse removeMedia(Long tourId, String objectKey) {
+    public TourManagerResponse removeMedia(UUID tourId, String objectKey) {
         if (objectKey == null || objectKey.isBlank()) {
             throw new BadRequestException("objectKey required");
         }
@@ -106,7 +107,7 @@ public class ManagerTourService {
         t.setEnableRailRegistration(req.enableRailRegistration());
     }
 
-    private String buildSlug(TourWriteRequest req, Long excludeId) {
+    private String buildSlug(TourWriteRequest req, UUID excludeId) {
         String raw = req.slug() != null && !req.slug().isBlank() ? req.slug() : req.title();
         String base = SlugUtils.slugify(raw);
         if (excludeId == null) {

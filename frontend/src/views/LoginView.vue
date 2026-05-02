@@ -8,12 +8,22 @@ const router = useRouter()
 const route = useRoute()
 const email = ref('')
 const password = ref('')
+const code = ref('')
+const otpRequested = ref(false)
 const error = ref('')
+const info = ref('')
 
 async function onSubmit() {
   error.value = ''
+  info.value = ''
   try {
-    await auth.login(email.value, password.value)
+    if (!otpRequested.value) {
+      await auth.requestLoginOtp(email.value, password.value)
+      otpRequested.value = true
+      info.value = 'Код отправлен на почту. Введите его ниже.'
+      return
+    }
+    await auth.loginWithOtp(email.value, code.value)
     const r = route.query.redirect
     router.push(typeof r === 'string' ? r : '/')
   } catch (e) {
@@ -36,9 +46,27 @@ async function onSubmit() {
         </div>
         <div class="field">
           <label class="label" for="pass">Пароль</label>
-          <input id="pass" v-model="password" class="input" type="password" autocomplete="current-password" required />
+          <input
+            id="pass"
+            v-model="password"
+            class="input"
+            type="password"
+            autocomplete="current-password"
+            :disabled="otpRequested"
+            required
+          />
         </div>
-        <button class="btn btn-gradient" type="submit" style="width: 100%">Войти</button>
+        <div v-if="otpRequested" class="field">
+          <label class="label" for="otp">Код из письма</label>
+          <input id="otp" v-model="code" class="input" inputmode="numeric" maxlength="6" placeholder="6 цифр" required />
+        </div>
+        <button class="btn btn-gradient" type="submit" style="width: 100%">
+          {{ otpRequested ? 'Подтвердить вход' : 'Получить код входа' }}
+        </button>
+        <button v-if="otpRequested" class="btn btn-ghost" type="button" style="width: 100%" @click="otpRequested = false; code = ''; info = ''">
+          Изменить email/пароль
+        </button>
+        <p v-if="info" class="muted">{{ info }}</p>
         <p v-if="error" class="error">{{ error }}</p>
       </form>
     </div>

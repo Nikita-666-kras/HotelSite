@@ -1,6 +1,9 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import api from '../api/client'
+
+const POLL_MS = 5000
+let pollTimer = null
 
 const threads = ref([])
 const active = ref(null)
@@ -30,7 +33,21 @@ async function send() {
   }
 }
 
-onMounted(loadList)
+onMounted(() => {
+  loadList()
+  pollTimer = setInterval(async () => {
+    try {
+      await loadList()
+      if (active.value?.id) await open(active.value.id)
+    } catch {
+      /* ignore */
+    }
+  }, POLL_MS)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
+})
 </script>
 
 <template>

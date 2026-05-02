@@ -20,6 +20,7 @@ import com.travelagency.repository.UserRepository;
 import com.travelagency.security.UserPrincipal;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,7 +115,7 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public BookingResponse getByIdForUser(Long id, UserPrincipal principal) {
+    public BookingResponse getByIdForUser(UUID id, UserPrincipal principal) {
         Booking b =
                 bookingRepository.findById(id).orElseThrow(() -> new NotFoundException("Booking not found"));
         if (principal.getRole() == Role.USER && !b.getUser().getId().equals(principal.getId())) {

@@ -15,14 +15,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tours")
 public class Tour {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 200)
     private String title;
@@ -94,7 +95,7 @@ public class Tour {
     @Column(name = "enable_rail_registration", nullable = false)
     private boolean enableRailRegistration;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

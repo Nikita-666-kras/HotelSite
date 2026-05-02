@@ -3,9 +3,10 @@ package com.travelagency.dto;
 import com.travelagency.domain.BookingStatus;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 public record BookingResponse(
-        Long id,
+        UUID id,
         BookingStatus status,
         String contactPhone,
         String notes,

@@ -10,14 +10,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "support_messages")
 public class SupportMessage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "conversation_id", nullable = false)
@@ -36,7 +37,7 @@ public class SupportMessage {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

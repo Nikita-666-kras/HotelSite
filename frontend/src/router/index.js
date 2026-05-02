@@ -50,6 +50,12 @@ const routes = [
     component: () => import('../views/ManagerSupportView.vue'),
     meta: { requiresAuth: true, requiresManager: true },
   },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: () => import('../views/AdminView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
   { path: '/about', name: 'about', component: () => import('../views/AboutView.vue') },
   { path: '/inspire', name: 'inspire', component: () => import('../views/InspireView.vue') },
   { path: '/favorites', name: 'favorites', component: () => import('../views/FavoritesView.vue') },
@@ -73,6 +79,9 @@ router.beforeEach(async (to) => {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
   if (to.meta.requiresManager && !auth.isManager) {
+    return { name: 'home' }
+  }
+  if (to.meta.requiresAdmin && !auth.isAdmin) {
     return { name: 'home' }
   }
 })

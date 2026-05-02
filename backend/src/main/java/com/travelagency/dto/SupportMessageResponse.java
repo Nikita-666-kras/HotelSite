@@ -1,6 +1,7 @@
 package com.travelagency.dto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record SupportMessageResponse(
-        Long id, String body, boolean staffReply, String authorEmail, Instant createdAt) {}
+        UUID id, String body, boolean staffReply, String authorEmail, Instant createdAt) {}

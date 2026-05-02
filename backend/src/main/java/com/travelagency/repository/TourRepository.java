@@ -6,17 +6,18 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface TourRepository extends JpaRepository<Tour, Long> {
+public interface TourRepository extends JpaRepository<Tour, UUID> {
 
     Optional<Tour> findBySlug(String slug);
 
     boolean existsBySlug(String slug);
 
-    boolean existsBySlugAndIdNot(String slug, Long id);
+    boolean existsBySlugAndIdNot(String slug, UUID id);
 
     List<Tour> findAllByOrderByIdDesc();
 

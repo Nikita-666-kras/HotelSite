@@ -6,6 +6,7 @@ import com.travelagency.dto.TourSearchRequest;
 import com.travelagency.repository.TourRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class TourService {
     }
 
     @Transactional(readOnly = true)
-    public TourResponse getById(Long id) {
+    public TourResponse getById(UUID id) {
         Tour tour = tourRepository.findById(id).orElseThrow(() -> new NotFoundException("Tour not found"));
         return toResponse(tour);
     }

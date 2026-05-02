@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,11 @@ public class JwtService {
         this.appProperties = appProperties;
     }
 
-    public String createAccessToken(Long userId, String email, Role role) {
+    public String createAccessToken(UUID userId, String email, Role role) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(appProperties.getJwt().getAccessTokenMinutes() * 60);
         return Jwts.builder()
-                .subject(String.valueOf(userId))
+                .subject(userId.toString())
                 .claims(Map.of("email", email, "role", role.name(), "typ", "access"))
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
@@ -33,11 +34,11 @@ public class JwtService {
                 .compact();
     }
 
-    public String createRefreshToken(Long userId) {
+    public String createRefreshToken(UUID userId) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(appProperties.getJwt().getRefreshTokenDays() * 24 * 60 * 60);
         return Jwts.builder()
-                .subject(String.valueOf(userId))
+                .subject(userId.toString())
                 .claims(Map.of("typ", "refresh"))
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))

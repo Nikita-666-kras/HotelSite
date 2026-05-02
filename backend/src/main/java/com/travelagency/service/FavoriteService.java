@@ -9,6 +9,7 @@ import com.travelagency.repository.TourRepository;
 import com.travelagency.repository.UserRepository;
 import com.travelagency.security.UserPrincipal;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,7 @@ public class FavoriteService {
     }
 
     @Transactional
-    public void add(UserPrincipal principal, Long tourId) {
+    public void add(UserPrincipal principal, UUID tourId) {
         if (favoriteTourRepository.existsByUserIdAndTourId(principal.getId(), tourId)) {
             return;
         }
@@ -54,7 +55,7 @@ public class FavoriteService {
     }
 
     @Transactional
-    public void remove(UserPrincipal principal, Long tourId) {
+    public void remove(UserPrincipal principal, UUID tourId) {
         favoriteTourRepository.deleteByUserIdAndTourId(principal.getId(), tourId);
     }
 }

@@ -33,16 +33,28 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(email, password) {
-    const { data } = await api.post('/api/auth/login', { email, password })
+  async function loginWithOtp(email, code) {
+    const { data } = await api.post('/api/auth/login/verify', { email, code })
     setTokens(data.accessToken, data.refreshToken)
     await hydrate()
     return data
   }
 
-  async function register(payload) {
-    await api.post('/api/auth/register', payload)
-    await login(payload.email, payload.password)
+  async function requestLoginOtp(email, password) {
+    const { data } = await api.post('/api/auth/login/request', { email, password })
+    return data
+  }
+
+  async function requestRegisterOtp(payload) {
+    const { data } = await api.post('/api/auth/register/request', payload)
+    return data
+  }
+
+  async function registerWithOtp(email, code) {
+    const { data } = await api.post('/api/auth/register/verify', { email, code })
+    setTokens(data.accessToken, data.refreshToken)
+    await hydrate()
+    return data
   }
 
   async function logout() {
@@ -61,8 +73,10 @@ export const useAuthStore = defineStore('auth', () => {
     isManager,
     isAdmin,
     hydrate,
-    login,
-    register,
+    requestLoginOtp,
+    loginWithOtp,
+    requestRegisterOtp,
+    registerWithOtp,
     logout,
     setTokens,
     setUser,

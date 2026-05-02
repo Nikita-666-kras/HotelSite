@@ -3,17 +3,18 @@ package com.travelagency.repository;
 import com.travelagency.domain.FavoriteTour;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FavoriteTourRepository extends JpaRepository<FavoriteTour, Long> {
+public interface FavoriteTourRepository extends JpaRepository<FavoriteTour, UUID> {
 
     @EntityGraph(attributePaths = {"tour"})
-    List<FavoriteTour> findByUserIdOrderByCreatedAtDesc(Long userId);
+    List<FavoriteTour> findByUserIdOrderByCreatedAtDesc(UUID userId);
 
-    boolean existsByUserIdAndTourId(Long userId, Long tourId);
+    boolean existsByUserIdAndTourId(UUID userId, UUID tourId);
 
-    Optional<FavoriteTour> findByUserIdAndTourId(Long userId, Long tourId);
+    Optional<FavoriteTour> findByUserIdAndTourId(UUID userId, UUID tourId);
 
-    void deleteByUserIdAndTourId(Long userId, Long tourId);
+    void deleteByUserIdAndTourId(UUID userId, UUID tourId);
 }

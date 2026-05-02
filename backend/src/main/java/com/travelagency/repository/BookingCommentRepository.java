@@ -1,0 +1,13 @@
+package com.travelagency.repository;
+
+import com.travelagency.domain.BookingComment;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BookingCommentRepository extends JpaRepository<BookingComment, UUID> {
+
+    @EntityGraph(attributePaths = {"author"})
+    List<BookingComment> findByBookingIdOrderByCreatedAtAsc(UUID bookingId);
+}

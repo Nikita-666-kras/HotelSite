@@ -12,14 +12,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "product_bookings")
 public class ProductBooking {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -39,7 +40,7 @@ public class ProductBooking {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
