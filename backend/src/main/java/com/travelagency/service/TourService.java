@@ -53,7 +53,10 @@ public class TourService {
 
     public TourResponse toResponse(Tour t) {
         List<String> urls =
-                t.getMediaObjectKeys().stream().map(storageService::presignedGetUrl).filter(u -> u != null).toList();
+                t.getMediaObjectKeys().stream()
+                        .map(storageService::resolveDisplayUrl)
+                        .filter(u -> u != null)
+                        .toList();
         return new TourResponse(
                 t.getId(),
                 t.getTitle(),
