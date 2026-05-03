@@ -39,8 +39,8 @@ public class StorageService {
     }
 
     /**
-     * Для API: ключ объекта в MinIO или устаревший полный URL вида
-     * http://localhost:19000/travel-media/... — пересобирается в актуальный публичный URL.
+     * Для API: ключ объекта в MinIO или устаревший полный URL (localhost / travel-media / …) —
+     * пересобирается в относительный URL {@code /api/media/...}, который отдаёт backend из MinIO.
      */
     public String resolveDisplayUrl(String stored) {
         if (stored == null || stored.isBlank()) {
@@ -79,22 +79,25 @@ public class StorageService {
     }
 
     private String publicObjectUrl(String objectKey) {
-        String publicEndpoint = appProperties.getMinio().getPublicEndpoint();
-        if (publicEndpoint == null || publicEndpoint.isBlank()) {
-            return null;
-        }
-        String normalized = publicEndpoint.endsWith("/") ? publicEndpoint.substring(0, publicEndpoint.length() - 1) : publicEndpoint;
         String encodedKey = encodePath(objectKey);
-        return normalized + "/" + appProperties.getMinio().getBucket() + "/" + encodedKey;
+        return "/api/media/" + encodedKey;
     }
 
-    /** Извлекает object key из path-style URL .../bucketName/key. */
+    /** Извлекает object key из path-style URL .../bucketName/key или .../api/media/key. */
     private String tryExtractBucketObjectKey(String url) {
         try {
             URI uri = URI.create(url.trim());
             String path = uri.getPath();
             if (path == null || path.isEmpty()) {
                 return null;
+            }
+            String apiPrefix = "/api/media/";
+            if (path.startsWith(apiPrefix)) {
+                String tail = path.substring(apiPrefix.length());
+                if (tail.isEmpty()) {
+                    return null;
+                }
+                return decodeObjectKeyPath(tail);
             }
             String bucket = appProperties.getMinio().getBucket();
             String prefix = "/" + bucket + "/";
